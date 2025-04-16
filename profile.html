@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Daily Utility App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Light mode variables */
+        [data-theme="light"] {
+            --bg-color: #f5f6fa;
+            --text-color: #2c3e50;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --hover-color: #f8f9fa;
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --border-color: #404040;
+            --hover-color: #3d3d3d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-sidebar {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .profile-pic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-pic-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .profile-info {
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--hover-color);
+            border-radius: 50%;
+            color: var(--primary-color);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--hover-color);
+            border-radius: 50%;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            min-height: 100px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .form-textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background-color: var(--hover-color);
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .settings-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 50%;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .settings-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .settings-description {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .version-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .version-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--hover-color);
+            border-radius: 5px;
+        }
+
+        .version-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 50%;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .version-details {
+            flex: 1;
+        }
+
+        .version-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .version-value {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .membership-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .membership-plan {
+            background-color: var(--hover-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .membership-plan:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .membership-plan.active {
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        .plan-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .plan-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .plan-feature i {
+            color: var(--success-color);
+        }
+
+        .plan-btn {
+            width: 100%;
+        }
+
+        .plan-btn.active {
+            background-color: var(--success-color);
+        }
+
+        .plan-btn.active:hover {
+            background-color: #27ae60;
+        }
+
+        @media (max-width: 992px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .membership-plans {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-pic {
+                width: 120px;
+                height: 120px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .settings-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .settings-item-left {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <nav class="navbar">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        <a href="#" class="navbar-brand">
+            <i class="fas fa-user-circle"></i>
+            Profile Settings
+        </a>
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </nav>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-pic-container">
+                    <img src="https://via.placeholder.com/150" alt="" class="profile-pic" id="profile-pic">
+                    <div class="profile-pic-upload">
+                        <button class="upload-btn" id="upload-btn">
+                            <i class="fas fa-camera"></i>
+                            Change Photo
+                        </button>
+                        <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="info-label">Name</div>
+                            <div class="info-value" id="profile-name">HARSHIT PRAKASH</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="info-label">Email</div>
+                            <div class="info-value" id="profile-email">harshitprakash@gmail.com</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <div class="info-label">Phone</div>
+                            <div class="info-value" id="profile-phone">+91 7890122892</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <div class="info-label">Location</div>
+                            <div class="info-value" id="profile-location">New Delhi, INDIA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-main">
+                <div class="profile-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h2 class="section-title">Personal Information</h2>
+                    </div>
+                    <form id="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name" class="form-label">First Name</label>
+                                <input type="text" id="first-name" class="form-input" value="HARSHIT">
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name" class="form-label">Last Name</label>
+                                <input type="text" id="last-name" class="form-input" value="PRAKASH">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" value="harshitprakash@gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" id="phone" class="form-input" value="+91 7890122892">
+                        </div>
+                        <div class="form-group">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" id="location" class="form-input" value="New Delhi, INDIA">
+                        </div>
+                        <div class="form-group">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea id="bio" class="form-textarea">Web developer </textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h2 class="section-title">Settings</h2>
+                    </div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-item-left">
+                                <div class="settings-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div>
+                                    <div class="settings-label">Notifications</div>
+                                    <div class="settings-description">Receive notifications about updates and activities</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-left">
+                                <div class="settings-icon">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div>
+                                    <div class="settings-label">Dark Mode</div>
+                                    <div class="settings-description">Switch between light and dark themes</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-left">
+                                <div class="settings-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <div>
+                                    <div class="settings-label">Two-Factor Authentication</div>
+                                    <div class="settings-description">Add an extra layer of security to your account</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-left">
+                                <div class="settings-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div>
+                                    <div class="settings-label">Language</div>
+                                    <div class="settings-description">Change the language of the application</div>
+                                </div>
+                            </div>
+                            <select class="form-input" style="width: auto;">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h2 class="section-title">Version Information</h2>
+                    </div>
+                    <div class="version-info">
+                        <div class="version-item">
+                            <div class="version-icon">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="version-details">
+                                <div class="version-label">App Version</div>
+                                <div class="version-value">1.0.0</div>
+                            </div>
+                        </div>
+                        <div class="version-item">
+                            <div class="version-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="version-details">
+                                <div class="version-label">Last Updated</div>
+                                <div class="version-value">June 15, 2024</div>
+                            </div>
+                        </div>
+                        <div class="version-item">
+                            <div class="version-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="version-details">
+                                <div class="version-label">Security Level</div>
+                                <div class="version-value">High</div>
+                            </div>
+                        </div>
+                        <div class="version-item">
+                            <div class="version-icon">
+                                <i class="fas fa-sync"></i>
+                            </div>
+                            <div class="version-details">
+                                <div class="version-label">Auto-Update</div>
+                                <div class="version-value">Enabled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h2 class="section-title">Membership</h2>
+                    </div>
+                    <div class="membership-plans">
+                        <div class="membership-plan">
+                            <div class="plan-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="plan-name">Free</h3>
+                            <div class="plan-price">$0</div>
+                            <ul class="plan-features">
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Basic features
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Limited storage
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Standard support
+                                </li>
+                            </ul>
+                            <button class="btn btn-block">Current Plan</button>
+                        </div>
+                        <div class="membership-plan">
+                            <div class="plan-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="plan-name">Pro</h3>
+                            <div class="plan-price">$9.99/mo</div>
+                            <ul class="plan-features">
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    All Free features
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Advanced features
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Priority support
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Ad-free experience
+                                </li>
+                            </ul>
+                            <button class="btn btn-block">Upgrade</button>
+                        </div>
+                        <div class="membership-plan active">
+                            <div class="plan-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h3 class="plan-name">Premium</h3>
+                            <div class="plan-price">$19.99/mo</div>
+                            <ul class="plan-features">
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    All Pro features
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Unlimited storage
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    24/7 premium support
+                                </li>
+                                <li class="plan-feature">
+                                    <i class="fas fa-check"></i>
+                                    Early access to new features
+                                </li>
+                            </ul>
+                            <button class="btn btn-block btn-success active">Current Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile picture upload
+            const profilePic = document.getElementById('profile-pic');
+            const uploadBtn = document.getElementById('upload-btn');
+            const profilePicInput = document.getElementById('profile-pic-input');
+
+            uploadBtn.addEventListener('click', function() {
+                profilePicInput.click();
+            });
+
+            profilePicInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        profilePic.src = e.target.result;
+                    }
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // Profile form submission
+            const profileForm = document.getElementById('profile-form');
+            
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const firstName = document.getElementById('first-name').value;
+                const lastName = document.getElementById('last-name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const location = document.getElementById('location').value;
+                const bio = document.getElementById('bio').value;
+                
+                // Update profile info
+                document.getElementById('profile-name').textContent = `${firstName} ${lastName}`;
+                document.getElementById('profile-email').textContent = email;
+                document.getElementById('profile-phone').textContent = phone;
+                document.getElementById('profile-location').textContent = location;
+                
+                // Show success message
+                alert('Profile updated successfully!');
+            });
+
+            // Toggle switches
+            const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+            
+            toggleSwitches.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const label = this.closest('.settings-item').querySelector('.settings-label').textContent;
+                    const status = this.checked ? 'enabled' : 'disabled';
+                    console.log(`${label} ${status}`);
+                });
+            });
+
+            // Membership plan selection
+            const planButtons = document.querySelectorAll('.membership-plan .btn');
+            
+            planButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        const planName = this.closest('.membership-plan').querySelector('.plan-name').textContent;
+                        alert(`You selected the ${planName} plan. This feature is for demonstration purposes only.`);
+                    }
+                });
+            });
+
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            const icon = themeToggle.querySelector('i');
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            body.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                // Update theme
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update icon
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Daily Utility App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: #3498db;
+        }
+
+        .main-content {
+            padding: 2rem;
+            background-color: #f5f6fa;
+            min-height: calc(100vh - 70px);
+        }
+
+        .habits-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .habits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .habits-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .add-habit-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .add-habit-btn:hover {
+            background: #2980b9;
+        }
+
+        .habits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .habit-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .habit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .habit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .habit-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .habit-icon {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+
+        .habit-streak {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .streak-count {
+            background: #fef5e7;
+            color: #e67e22;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .habit-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            position: relative;
+        }
+
+        .calendar-day.completed {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .calendar-day.today {
+            border: 2px solid #3498db;
+        }
+
+        .calendar-day.missed {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .habit-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .habit-btn {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .habit-btn:hover {
+            color: #3498db;
+        }
+
+        .habit-btn.delete-btn:hover {
+            color: #e74c3c;
+        }
+
+        .habit-reminder {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+        }
+
+        .form-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #bdc3c7;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            color: #f1c40f;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .habits-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .habits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .habit-card {
+                padding: 1.2rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .notification {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        <a href="#" class="navbar-brand">
+            <i class="fas fa-chart-line"></i>
+            Habit Tracker
+        </a>
+        <div style="width: 40px;"></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="habits-container">
+            <div class="habits-header">
+                <h1 class="habits-title">My Habits</h1>
+                <button class="add-habit-btn" onclick="openAddHabitModal()">
+                    <i class="fas fa-plus"></i>
+                    Add New Habit
+                </button>
+            </div>
+
+            <div id="habits-grid" class="habits-grid">
+                <!-- Habits will be added here -->
+            </div>
+
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2 class="empty-text">No habits added yet</h2>
+                <button class="add-habit-btn" onclick="openAddHabitModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Your First Habit
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Habit Modal -->
+    <div id="add-habit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Habit</h2>
+                <button class="modal-close" onclick="closeModal('add-habit-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-habit-form" onsubmit="addHabit(event)">
+                <div class="form-group">
+                    <label for="habit-name" class="form-label">Habit Name</label>
+                    <input type="text" id="habit-name" class="form-input" placeholder="e.g., Morning Meditation" required>
+                </div>
+                <div class="form-group">
+                    <label for="habit-icon" class="form-label">Icon</label>
+                    <select id="habit-icon" class="form-select">
+                        <option value="fa-meditation">Meditation</option>
+                        <option value="fa-dumbbell">Exercise</option>
+                        <option value="fa-book">Reading</option>
+                        <option value="fa-utensils">Healthy Eating</option>
+                        <option value="fa-bed">Sleep</option>
+                        <option value="fa-walking">Walking</option>
+                        <option value="fa-pen">Journaling</option>
+                        <option value="fa-glass-water">Water Intake</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="habit-reminder" class="form-label">Daily Reminder</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="checkbox" id="habit-reminder" class="form-checkbox">
+                        <label for="habit-reminder">Enable daily reminder</label>
+                    </div>
+                </div>
+                <div class="form-group" id="reminder-time-group" style="display: none;">
+                    <label for="reminder-time" class="form-label">Reminder Time</label>
+                    <input type="time" id="reminder-time" class="form-input">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-habit-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Habit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Habit Modal -->
+    <div id="edit-habit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Habit</h2>
+                <button class="modal-close" onclick="closeModal('edit-habit-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="edit-habit-form" onsubmit="updateHabit(event)">
+                <input type="hidden" id="edit-habit-id">
+                <div class="form-group">
+                    <label for="edit-habit-name" class="form-label">Habit Name</label>
+                    <input type="text" id="edit-habit-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-habit-icon" class="form-label">Icon</label>
+                    <select id="edit-habit-icon" class="form-select">
+                        <option value="fa-meditation">Meditation</option>
+                        <option value="fa-dumbbell">Exercise</option>
+                        <option value="fa-book">Reading</option>
+                        <option value="fa-utensils">Healthy Eating</option>
+                        <option value="fa-bed">Sleep</option>
+                        <option value="fa-walking">Walking</option>
+                        <option value="fa-pen">Journaling</option>
+                        <option value="fa-glass-water">Water Intake</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-habit-reminder" class="form-label">Daily Reminder</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="checkbox" id="edit-habit-reminder" class="form-checkbox">
+                        <label for="edit-habit-reminder">Enable daily reminder</label>
+                    </div>
+                </div>
+                <div class="form-group" id="edit-reminder-time-group" style="display: none;">
+                    <label for="edit-reminder-time" class="form-label">Reminder Time</label>
+                    <input type="time" id="edit-reminder-time" class="form-input">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('edit-habit-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script>
+        // Initialize habits array from localStorage or empty array
+        let habits = JSON.parse(localStorage.getItem('habits')) || [];
+        let habitId = 0;
+
+        // Add mock data if no habits exist
+        if (habits.length === 0) {
+            // Get today's date and format it
+            const today = new Date();
+            const todayString = formatDate(today);
+            
+            // Get yesterday's date
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            const yesterdayString = formatDate(yesterday);
+            
+            // Get date from 3 days ago
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(today.getDate() - 3);
+            const threeDaysAgoString = formatDate(threeDaysAgo);
+            
+            // Get date from 5 days ago
+            const fiveDaysAgo = new Date();
+            fiveDaysAgo.setDate(today.getDate() - 5);
+            const fiveDaysAgoString = formatDate(fiveDaysAgo);
+            
+            // Create mock habits
+            habits = [
+                {
+                    id: 1,
+                    name: "Morning Meditation",
+                    icon: "fa-meditation",
+                    completedDates: [todayString, yesterdayString, threeDaysAgoString, fiveDaysAgoString],
+                    reminder: true,
+                    reminderTime: "07:00"
+                },
+                {
+                    id: 2,
+                    name: "Daily Exercise",
+                    icon: "fa-dumbbell",
+                    completedDates: [todayString, yesterdayString],
+                    reminder: true,
+                    reminderTime: "18:00"
+                },
+                {
+                    id: 3,
+                    name: "Read 30 Minutes",
+                    icon: "fa-book",
+                    completedDates: [todayString, threeDaysAgoString],
+                    reminder: false,
+                    reminderTime: null
+                },
+                {
+                    id: 4,
+                    name: "Drink Water",
+                    icon: "fa-glass-water",
+                    completedDates: [todayString, yesterdayString, threeDaysAgoString, fiveDaysAgoString],
+                    reminder: true,
+                    reminderTime: "12:00"
+                },
+                {
+                    id: 5,
+                    name: "Journal",
+                    icon: "fa-pen",
+                    completedDates: [yesterdayString, threeDaysAgoString],
+                    reminder: false,
+                    reminderTime: null
+                }
+            ];
+            
+            // Set the habitId to the highest ID in the mock data
+            habitId = 5;
+            
+            // Save mock data to localStorage
+            localStorage.setItem('habits', JSON.stringify(habits));
+        }
+
+        // DOM Elements
+        const habitsGrid = document.getElementById('habits-grid');
+        const emptyState = document.getElementById('empty-state');
+        const addHabitModal = document.getElementById('add-habit-modal');
+        const editHabitModal = document.getElementById('edit-habit-modal');
+        const habitReminderCheckbox = document.getElementById('habit-reminder');
+        const reminderTimeGroup = document.getElementById('reminder-time-group');
+        const editHabitReminderCheckbox = document.getElementById('edit-habit-reminder');
+        const editReminderTimeGroup = document.getElementById('edit-reminder-time-group');
+
+        // Event Listeners
+        habitReminderCheckbox.addEventListener('change', function() {
+            reminderTimeGroup.style.display = this.checked ? 'block' : 'none';
+        });
+
+        editHabitReminderCheckbox.addEventListener('change', function() {
+            editReminderTimeGroup.style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderHabits();
+            checkReminders();
+        });
+
+        // Render all habits
+        function renderHabits() {
+            habitsGrid.innerHTML = '';
+            
+            if (habits.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            habits.forEach(habit => {
+                const habitCard = createHabitCard(habit);
+                habitsGrid.appendChild(habitCard);
+            });
+        }
+
+        // Create a habit card element
+        function createHabitCard(habit) {
+            const card = document.createElement('div');
+            card.className = 'habit-card';
+            card.id = `habit-${habit.id}`;
+            
+            // Calculate streak
+            const streak = calculateStreak(habit);
+            
+            // Create calendar days
+            const calendarDays = createCalendarDays(habit);
+            
+            // Check if reminder is enabled
+            const reminderDisplay = habit.reminder ? 
+                `<div class="habit-reminder">
+                    <i class="fas fa-bell"></i> Daily reminder at ${formatTime(habit.reminderTime)}
+                </div>` : '';
+            
+            card.innerHTML = `
+                <div class="habit-header">
+                    <h3 class="habit-title">${habit.name}</h3>
+                    <div class="habit-icon">
+                        <i class="fas ${habit.icon}"></i>
+                    </div>
+                </div>
+                <div class="habit-streak">
+                    <i class="fas fa-fire"></i>
+                    <span>${streak} day streak</span>
+                    <span class="streak-count">${streak}</span>
+                </div>
+                <div class="habit-calendar">
+                    ${calendarDays}
+                </div>
+                ${reminderDisplay}
+                <div class="habit-actions">
+                    <button class="habit-btn" onclick="toggleHabitCompletion(${habit.id})">
+                        <i class="fas fa-check"></i> Complete Today
+                    </button>
+                    <div>
+                        <button class="habit-btn" onclick="openEditHabitModal(${habit.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="habit-btn delete-btn" onclick="deleteHabit(${habit.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Create calendar days for a habit
+        function createCalendarDays(habit) {
+            const today = new Date();
+            const days = [];
+            
+            // Get the last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                const dateString = formatDate(date);
+                
+                // Check if this day is completed
+                const isCompleted = habit.completedDates.includes(dateString);
+                const isToday = i === 0;
+                const isMissed = !isCompleted && isToday && new Date().getHours() >= 20; // Consider missed after 8 PM
+                
+                let dayClass = 'calendar-day';
+                if (isCompleted) dayClass += ' completed';
+                if (isToday) dayClass += ' today';
+                if (isMissed) dayClass += ' missed';
+                
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0);
+                
+                days.push(`<div class="${dayClass}" title="${dateString}">${dayName}</div>`);
+            }
+            
+            return days.join('');
+        }
+
+        // Calculate streak for a habit
+        function calculateStreak(habit) {
+            const today = new Date();
+            const todayString = formatDate(today);
+            
+            // If today is completed, start counting from today
+            if (habit.completedDates.includes(todayString)) {
+                let streak = 1;
+                let currentDate = new Date();
+                
+                // Check previous days
+                for (let i = 1; i < 30; i++) { // Limit to 30 days to avoid infinite loop
+                    currentDate.setDate(today.getDate() - i);
+                    const dateString = formatDate(currentDate);
+                    
+                    if (habit.completedDates.includes(dateString)) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                return streak;
+            } 
+            // If today is not completed, check if yesterday was completed
+            else {
+                const yesterday = new Date();
+                yesterday.setDate(today.getDate() - 1);
+                const yesterdayString = formatDate(yesterday);
+                
+                if (habit.completedDates.includes(yesterdayString)) {
+                    let streak = 1;
+                    let currentDate = new Date(yesterday);
+                    
+                    // Check previous days
+                    for (let i = 1; i < 30; i++) {
+                        currentDate.setDate(yesterday.getDate() - i);
+                        const dateString = formatDate(currentDate);
+                        
+                        if (habit.completedDates.includes(dateString)) {
+                            streak++;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    return streak;
+                }
+            }
+            
+            return 0;
+        }
+
+        // Format date as YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Format time as HH:MM AM/PM
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const formattedHour = hour % 12 || 12;
+            
+            return `${formattedHour}:${minutes} ${ampm}`;
+        }
+
+        // Toggle habit completion for today
+        function toggleHabitCompletion(habitId) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            const today = formatDate(new Date());
+            
+            // Check if already completed today
+            const index = habit.completedDates.indexOf(today);
+            
+            if (index === -1) {
+                // Mark as completed
+                habit.completedDates.push(today);
+                showNotification(`Great job! You've completed "${habit.name}" today.`);
+            } else {
+                // Mark as not completed
+                habit.completedDates.splice(index, 1);
+                showNotification(`You've unmarked "${habit.name}" for today.`);
+            }
+            
+            // Save and re-render
+            saveHabits();
+            renderHabits();
+        }
+
+        // Add a new habit
+        function addHabit(event) {
+            event.preventDefault();
+            
+            const nameInput = document.getElementById('habit-name');
+            const iconSelect = document.getElementById('habit-icon');
+            const reminderCheckbox = document.getElementById('habit-reminder');
+            const reminderTimeInput = document.getElementById('reminder-time');
+            
+            const name = nameInput.value.trim();
+            const icon = iconSelect.value;
+            const reminder = reminderCheckbox.checked;
+            const reminderTime = reminder ? reminderTimeInput.value : null;
+            
+            if (name) {
+                habitId++;
+                
+                const newHabit = {
+                    id: habitId,
+                    name: name,
+                    icon: icon,
+                    completedDates: [],
+                    reminder: reminder,
+                    reminderTime: reminderTime
+                };
+                
+                habits.push(newHabit);
+                saveHabits();
+                renderHabits();
+                
+                // Reset form and close modal
+                nameInput.value = '';
+                reminderCheckbox.checked = false;
+                reminderTimeGroup.style.display = 'none';
+                closeModal('add-habit-modal');
+                
+                showNotification(`New habit "${name}" has been added!`);
+                
+                // Set up reminder if enabled
+                if (reminder && reminderTime) {
+                    setupReminder(newHabit);
+                }
+            }
+        }
+
+        // Open edit habit modal
+        function openEditHabitModal(habitId) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            document.getElementById('edit-habit-id').value = habit.id;
+            document.getElementById('edit-habit-name').value = habit.name;
+            document.getElementById('edit-habit-icon').value = habit.icon;
+            document.getElementById('edit-habit-reminder').checked = habit.reminder;
+            document.getElementById('edit-reminder-time').value = habit.reminderTime || '';
+            document.getElementById('edit-reminder-time-group').style.display = habit.reminder ? 'block' : 'none';
+            
+            openModal('edit-habit-modal');
+        }
+
+        // Update an existing habit
+        function updateHabit(event) {
+            event.preventDefault();
+            
+            const id = parseInt(document.getElementById('edit-habit-id').value);
+            const nameInput = document.getElementById('edit-habit-name');
+            const iconSelect = document.getElementById('edit-habit-icon');
+            const reminderCheckbox = document.getElementById('edit-habit-reminder');
+            const reminderTimeInput = document.getElementById('edit-reminder-time');
+            
+            const name = nameInput.value.trim();
+            const icon = iconSelect.value;
+            const reminder = reminderCheckbox.checked;
+            const reminderTime = reminder ? reminderTimeInput.value : null;
+            
+            if (name) {
+                const habitIndex = habits.findIndex(h => h.id === id);
+                
+                if (habitIndex !== -1) {
+                    // Update habit properties
+                    habits[habitIndex].name = name;
+                    habits[habitIndex].icon = icon;
+                    habits[habitIndex].reminder = reminder;
+                    habits[habitIndex].reminderTime = reminderTime;
+                    
+                    saveHabits();
+                    renderHabits();
+                    
+                    // Close modal
+                    closeModal('edit-habit-modal');
+                    
+                    showNotification(`Habit "${name}" has been updated!`);
+                    
+                    // Set up reminder if enabled
+                    if (reminder && reminderTime) {
+                        setupReminder(habits[habitIndex]);
+                    }
+                }
+            }
+        }
+
+        // Delete a habit
+        function deleteHabit(habitId) {
+            if (confirm('Are you sure you want to delete this habit?')) {
+                const habitIndex = habits.findIndex(h => h.id === habitId);
+                
+                if (habitIndex !== -1) {
+                    const habitName = habits[habitIndex].name;
+                    habits.splice(habitIndex, 1);
+                    saveHabits();
+                    renderHabits();
+                    
+                    showNotification(`Habit "${habitName}" has been deleted.`);
+                }
+            }
+        }
+
+        // Save habits to localStorage
+        function saveHabits() {
+            localStorage.setItem('habits', JSON.stringify(habits));
+        }
+
+        // Open a modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+        }
+
+        // Close a modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+        }
+
+        // Open add habit modal
+        function openAddHabitModal() {
+            openModal('add-habit-modal');
+        }
+
+        // Set up reminder for a habit
+        function setupReminder(habit) {
+            if (!habit.reminder || !habit.reminderTime) return;
+            
+            // Parse reminder time
+            const [hours, minutes] = habit.reminderTime.split(':');
+            const now = new Date();
+            const reminderTime = new Date();
+            reminderTime.setHours(parseInt(hours), parseInt(minutes), 0);
+            
+            // If reminder time is in the past today, schedule for tomorrow
+            if (reminderTime < now) {
+                reminderTime.setDate(reminderTime.getDate() + 1);
+            }
+            
+            // Calculate time until reminder
+            const timeUntilReminder = reminderTime.getTime() - now.getTime();
+            
+            // Set timeout for reminder
+            setTimeout(() => {
+                showNotification(`Time for your "${habit.name}" habit!`, 'reminder');
+                
+                // Schedule next reminder for tomorrow
+                setupReminder(habit);
+            }, timeUntilReminder);
+        }
+
+        // Check for reminders that need to be set up
+        function checkReminders() {
+            habits.forEach(habit => {
+                if (habit.reminder && habit.reminderTime) {
+                    setupReminder(habit);
+                }
+            });
+        }
+
+        // Show a notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            let icon = 'fa-check-circle';
+            if (type === 'reminder') {
+                icon = 'fa-bell';
+            }
+            
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${type === 'reminder' ? 'Habit Reminder' : 'Success'}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.getElementById('notification-container').appendChild(notification);
+            
+            // Auto-remove notification after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+            
+            // Play notification sound if supported
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Habit Tracker', {
+                    body: message,
+                    icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/bell.svg'
+                });
+            }
+        }
+
+        // Request notification permission
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
+    </script>
+</body>
+</html> 

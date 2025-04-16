@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer & Stopwatch - Daily Utility App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .timer-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            transition: var(--transition);
+        }
+
+        .timer-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timer-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .timer-mode-toggle {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .mode-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+        }
+
+        .timer-display {
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .time {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .timer-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 0 rgba(52, 152, 219, 0.4);
+        }
+
+        .timer-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .timer-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 rgba(52, 152, 219, 0.4);
+        }
+
+        .timer-btn.reset {
+            background-color: var(--warning-color);
+            box-shadow: 0 4px 0 rgba(243, 156, 18, 0.4);
+        }
+
+        .timer-btn.reset:hover {
+            background-color: #e67e22;
+        }
+
+        .timer-btn.reset:active {
+            box-shadow: 0 0 0 rgba(243, 156, 18, 0.4);
+        }
+
+        .timer-btn.stop {
+            background-color: var(--danger-color);
+            box-shadow: 0 4px 0 rgba(231, 76, 60, 0.4);
+        }
+
+        .timer-btn.stop:hover {
+            background-color: #c0392b;
+        }
+
+        .timer-btn.stop:active {
+            box-shadow: 0 0 0 rgba(231, 76, 60, 0.4);
+        }
+
+        .timer-btn.lap {
+            background-color: var(--success-color);
+            box-shadow: 0 4px 0 rgba(46, 204, 113, 0.4);
+        }
+
+        .timer-btn.lap:hover {
+            background-color: #27ae60;
+        }
+
+        .timer-btn.lap:active {
+            box-shadow: 0 0 0 rgba(46, 204, 113, 0.4);
+        }
+
+        .timer-input {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+        }
+
+        .time-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .time-input label {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+        }
+
+        .time-input input {
+            width: 60px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .timer-laps {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .lap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .lap-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .lap-number {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .lap-time {
+            font-family: 'Courier New', monospace;
+        }
+
+        .lap-diff {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .tap-area {
+            width: 100%;
+            height: 150px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-top: 1px solid #e9ecef;
+        }
+
+        .tap-area:hover {
+            background-color: #e9ecef;
+        }
+
+        .tap-area:active {
+            background-color: #dee2e6;
+        }
+
+        .tap-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .tap-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .tap-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .tap-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .tap-stat-label {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .tap-history {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .tap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .tap-time {
+            font-family: 'Courier New', monospace;
+        }
+
+        .tap-interval {
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .timer-container {
+                max-width: 100%;
+            }
+
+            .time {
+                font-size: 3rem;
+            }
+
+            .timer-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .timer-input {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time {
+                font-size: 2.5rem;
+            }
+
+            .timer-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .timer-controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        <a href="#" class="navbar-brand">
+            <i class="fas fa-clock"></i>
+            Timer & Stopwatch
+        </a>
+        <div style="width: 40px;"></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="timer-container">
+            <div class="timer-header">
+                <div class="timer-title">Timer & Stopwatch</div>
+                <div class="timer-mode-toggle">
+                    <button class="mode-btn active" id="timer-mode">Timer</button>
+                    <button class="mode-btn" id="stopwatch-mode">Stopwatch</button>
+                    <button class="mode-btn" id="tap-mode">Tap Counter</button>
+                </div>
+            </div>
+
+            <!-- Timer Display -->
+            <div class="timer-display" id="timer-display">
+                <div class="time" id="time-display">00:00:00</div>
+                <div class="timer-input" id="timer-input">
+                    <div class="time-input">
+                        <label for="hours">Hours</label>
+                        <input type="number" id="hours" min="0" max="23" value="0">
+                    </div>
+                    <div class="time-input">
+                        <label for="minutes">Minutes</label>
+                        <input type="number" id="minutes" min="0" max="59" value="0">
+                    </div>
+                    <div class="time-input">
+                        <label for="seconds">Seconds</label>
+                        <input type="number" id="seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+                <div class="timer-controls" id="timer-controls">
+                    <button class="timer-btn" id="start-timer">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="timer-btn reset" id="reset-timer">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stopwatch Display -->
+            <div class="timer-display" id="stopwatch-display" style="display: none;">
+                <div class="time" id="stopwatch-time">00:00:00.00</div>
+                <div class="timer-controls" id="stopwatch-controls">
+                    <button class="timer-btn" id="start-stopwatch">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="timer-btn stop" id="stop-stopwatch" style="display: none;">
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                    <button class="timer-btn reset" id="reset-stopwatch">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                    <button class="timer-btn lap" id="lap-stopwatch">
+                        <i class="fas fa-flag"></i> Lap
+                    </button>
+                </div>
+                <div class="timer-laps" id="stopwatch-laps"></div>
+            </div>
+
+            <!-- Tap Counter Display -->
+            <div class="timer-display" id="tap-display" style="display: none;">
+                <div class="time" id="tap-time">00:00:00</div>
+                <div class="tap-area" id="tap-area">
+                    <div class="tap-count" id="tap-count">0</div>
+                </div>
+                <div class="tap-stats">
+                    <div class="tap-stat">
+                        <div class="tap-stat-value" id="tap-rate">0</div>
+                        <div class="tap-stat-label">Taps/sec</div>
+                    </div>
+                    <div class="tap-stat">
+                        <div class="tap-stat-value" id="tap-interval">0</div>
+                        <div class="tap-stat-label">Avg Interval (ms)</div>
+                    </div>
+                    <div class="tap-stat">
+                        <div class="tap-stat-value" id="tap-total">0</div>
+                        <div class="tap-stat-label">Total Taps</div>
+                    </div>
+                </div>
+                <div class="timer-controls">
+                    <button class="timer-btn reset" id="reset-tap">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                <div class="tap-history" id="tap-history"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const timerDisplay = document.getElementById('timer-display');
+        const stopwatchDisplay = document.getElementById('stopwatch-display');
+        const tapDisplay = document.getElementById('tap-display');
+        const timeDisplay = document.getElementById('time-display');
+        const stopwatchTime = document.getElementById('stopwatch-time');
+        const tapTime = document.getElementById('tap-time');
+        const timerModeBtn = document.getElementById('timer-mode');
+        const stopwatchModeBtn = document.getElementById('stopwatch-mode');
+        const tapModeBtn = document.getElementById('tap-mode');
+        const startTimerBtn = document.getElementById('start-timer');
+        const resetTimerBtn = document.getElementById('reset-timer');
+        const startStopwatchBtn = document.getElementById('start-stopwatch');
+        const stopStopwatchBtn = document.getElementById('stop-stopwatch');
+        const resetStopwatchBtn = document.getElementById('reset-stopwatch');
+        const lapStopwatchBtn = document.getElementById('lap-stopwatch');
+        const resetTapBtn = document.getElementById('reset-tap');
+        const hoursInput = document.getElementById('hours');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const stopwatchLaps = document.getElementById('stopwatch-laps');
+        const tapArea = document.getElementById('tap-area');
+        const tapCount = document.getElementById('tap-count');
+        const tapRate = document.getElementById('tap-rate');
+        const tapInterval = document.getElementById('tap-interval');
+        const tapTotal = document.getElementById('tap-total');
+        const tapHistory = document.getElementById('tap-history');
+
+        // Timer variables
+        let timerInterval;
+        let timerTimeLeft = 0;
+        let timerRunning = false;
+
+        // Stopwatch variables
+        let stopwatchInterval;
+        let stopwatchTimeElapsed = 0;
+        let stopwatchRunning = false;
+        let stopwatchLapTimes = [];
+        let stopwatchStartTime;
+
+        // Tap counter variables
+        let tapIntervalId;
+        let tapStartTime;
+        let tapCountValue = 0;
+        let tapTimes = [];
+        let tapRunning = false;
+        let tapRateValue = 0;
+        let tapIntervalValue = 0;
+
+        // Initialize the app
+        function initApp() {
+            // Add event listeners to mode buttons
+            timerModeBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                switchToTimerMode();
+            });
+            stopwatchModeBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                switchToStopwatchMode();
+            });
+            tapModeBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                switchToTapMode();
+            });
+
+            // Add event listeners to timer buttons
+            startTimerBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                toggleTimer();
+            });
+            resetTimerBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(15);
+                resetTimer();
+            });
+
+            // Add event listeners to stopwatch buttons
+            startStopwatchBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                toggleStopwatch();
+            });
+            stopStopwatchBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                toggleStopwatch();
+            });
+            resetStopwatchBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(15);
+                resetStopwatch();
+            });
+            lapStopwatchBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+                addLap();
+            });
+
+            // Add event listeners to tap counter buttons
+            resetTapBtn.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(15);
+                resetTapCounter();
+            });
+            tapArea.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(5);
+                handleTap();
+            });
+
+            // Add keyboard support
+            document.addEventListener('keydown', handleKeyboardInput);
+        }
+
+        // Handle keyboard input
+        function handleKeyboardInput(event) {
+            const key = event.key;
+            
+            // Space bar to start/stop
+            if (key === ' ') {
+                if (timerDisplay.style.display !== 'none') {
+                    toggleTimer();
+                } else if (stopwatchDisplay.style.display !== 'none') {
+                    toggleStopwatch();
+                }
+            }
+            
+            // Escape to reset
+            else if (key === 'Escape') {
+                if (timerDisplay.style.display !== 'none') {
+                    resetTimer();
+                } else if (stopwatchDisplay.style.display !== 'none') {
+                    resetStopwatch();
+                } else if (tapDisplay.style.display !== 'none') {
+                    resetTapCounter();
+                }
+            }
+            
+            // L key for lap
+            else if (key === 'l' && stopwatchDisplay.style.display !== 'none' && stopwatchRunning) {
+                addLap();
+            }
+        }
+
+        // Switch to timer mode
+        function switchToTimerMode() {
+            timerDisplay.style.display = 'block';
+            stopwatchDisplay.style.display = 'none';
+            tapDisplay.style.display = 'none';
+            timerModeBtn.classList.add('active');
+            stopwatchModeBtn.classList.remove('active');
+            tapModeBtn.classList.remove('active');
+            
+            // Stop any running timers
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                startStopwatchBtn.style.display = 'block';
+                stopStopwatchBtn.style.display = 'none';
+            }
+            
+            if (tapRunning) {
+                clearInterval(tapIntervalId);
+                tapRunning = false;
+            }
+        }
+
+        // Switch to stopwatch mode
+        function switchToStopwatchMode() {
+            timerDisplay.style.display = 'none';
+            stopwatchDisplay.style.display = 'block';
+            tapDisplay.style.display = 'none';
+            timerModeBtn.classList.remove('active');
+            stopwatchModeBtn.classList.add('active');
+            tapModeBtn.classList.remove('active');
+            
+            // Stop any running timers
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startTimerBtn.textContent = 'Start';
+            }
+            
+            if (tapRunning) {
+                clearInterval(tapIntervalId);
+                tapRunning = false;
+            }
+        }
+
+        // Switch to tap counter mode
+        function switchToTapMode() {
+            timerDisplay.style.display = 'none';
+            stopwatchDisplay.style.display = 'none';
+            tapDisplay.style.display = 'block';
+            timerModeBtn.classList.remove('active');
+            stopwatchModeBtn.classList.remove('active');
+            tapModeBtn.classList.add('active');
+            
+            // Stop any running timers
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startTimerBtn.textContent = 'Start';
+            }
+            
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                startStopwatchBtn.style.display = 'block';
+                stopStopwatchBtn.style.display = 'none';
+            }
+        }
+
+        // Toggle timer
+        function toggleTimer() {
+            if (timerRunning) {
+                // Pause timer
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startTimerBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            } else {
+                // Start timer
+                if (timerTimeLeft === 0) {
+                    // Get time from inputs
+                    const hours = parseInt(hoursInput.value) || 0;
+                    const minutes = parseInt(minutesInput.value) || 0;
+                    const seconds = parseInt(secondsInput.value) || 0;
+                    
+                    if (hours === 0 && minutes === 0 && seconds === 0) {
+                        return; // Don't start if no time is set
+                    }
+                    
+                    timerTimeLeft = hours * 3600 + minutes * 60 + seconds;
+                }
+                
+                timerInterval = setInterval(updateTimer, 1000);
+                timerRunning = true;
+                startTimerBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
+        }
+
+        // Update timer
+        function updateTimer() {
+            if (timerTimeLeft > 0) {
+                timerTimeLeft--;
+                updateTimerDisplay();
+            } else {
+                // Timer finished
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startTimerBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+                
+                // Play sound or vibrate
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                
+                // Show alert
+                alert('Timer finished!');
+            }
+        }
+
+        // Reset timer
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerTimeLeft = 0;
+            startTimerBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+            updateTimerDisplay();
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const hours = Math.floor(timerTimeLeft / 3600);
+            const minutes = Math.floor((timerTimeLeft % 3600) / 60);
+            const seconds = timerTimeLeft % 60;
+            
+            timeDisplay.textContent = `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
+        }
+
+        // Toggle stopwatch
+        function toggleStopwatch() {
+            if (stopwatchRunning) {
+                // Pause stopwatch
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                startStopwatchBtn.style.display = 'block';
+                stopStopwatchBtn.style.display = 'none';
+            } else {
+                // Start stopwatch
+                stopwatchStartTime = Date.now() - stopwatchTimeElapsed;
+                stopwatchInterval = setInterval(updateStopwatch, 10);
+                stopwatchRunning = true;
+                startStopwatchBtn.style.display = 'none';
+                stopStopwatchBtn.style.display = 'block';
+            }
+        }
+
+        // Update stopwatch
+        function updateStopwatch() {
+            stopwatchTimeElapsed = Date.now() - stopwatchStartTime;
+            updateStopwatchDisplay();
+        }
+
+        // Reset stopwatch
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchTimeElapsed = 0;
+            stopwatchLapTimes = [];
+            startStopwatchBtn.style.display = 'block';
+            stopStopwatchBtn.style.display = 'none';
+            updateStopwatchDisplay();
+            renderLaps();
+        }
+
+        // Add lap
+        function addLap() {
+            if (stopwatchRunning) {
+                const currentTime = stopwatchTimeElapsed;
+                const previousTime = stopwatchLapTimes.length > 0 ? stopwatchLapTimes[stopwatchLapTimes.length - 1].time : 0;
+                const lapTime = currentTime - previousTime;
+                
+                stopwatchLapTimes.push({
+                    number: stopwatchLapTimes.length + 1,
+                    time: currentTime,
+                    lapTime: lapTime
+                });
+                
+                renderLaps();
+            }
+        }
+
+        // Render laps
+        function renderLaps() {
+            stopwatchLaps.innerHTML = '';
+            
+            if (stopwatchLapTimes.length === 0) {
+                return;
+            }
+            
+            // Sort laps by number (newest first)
+            const sortedLaps = [...stopwatchLapTimes].sort((a, b) => b.number - a.number);
+            
+            sortedLaps.forEach(lap => {
+                const lapItem = document.createElement('div');
+                lapItem.className = 'lap-item';
+                
+                const lapNumber = document.createElement('div');
+                lapNumber.className = 'lap-number';
+                lapNumber.textContent = `Lap ${lap.number}`;
+                
+                const lapTime = document.createElement('div');
+                lapTime.className = 'lap-time';
+                lapTime.textContent = formatStopwatchTime(lap.time);
+                
+                const lapDiff = document.createElement('div');
+                lapDiff.className = 'lap-diff';
+                lapDiff.textContent = `+${formatStopwatchTime(lap.lapTime)}`;
+                
+                lapItem.appendChild(lapNumber);
+                lapItem.appendChild(lapTime);
+                lapItem.appendChild(lapDiff);
+                
+                stopwatchLaps.appendChild(lapItem);
+            });
+        }
+
+        // Update stopwatch display
+        function updateStopwatchDisplay() {
+            stopwatchTime.textContent = formatStopwatchTime(stopwatchTimeElapsed);
+        }
+
+        // Handle tap
+        function handleTap() {
+            if (!tapRunning) {
+                // Start tap counter
+                tapRunning = true;
+                tapStartTime = Date.now();
+                tapTimes = [];
+                tapIntervalId = setInterval(updateTapStats, 100);
+            }
+            
+            // Add tap
+            tapCountValue++;
+            tapTimes.push(Date.now());
+            
+            // Update display
+            tapCount.textContent = tapCountValue;
+            tapTotal.textContent = tapCountValue;
+            
+            // Add to history
+            addTapToHistory();
+        }
+
+        // Update tap stats
+        function updateTapStats() {
+            if (tapTimes.length > 0) {
+                // Calculate tap rate (taps per second)
+                const now = Date.now();
+                const oneSecondAgo = now - 1000;
+                
+                // Filter taps from the last second
+                const recentTaps = tapTimes.filter(time => time > oneSecondAgo);
+                
+                // Update tap rate
+                tapRateValue = recentTaps.length;
+                tapRate.textContent = tapRateValue;
+                
+                // Calculate average interval
+                if (tapTimes.length > 1) {
+                    const intervals = [];
+                    for (let i = 1; i < tapTimes.length; i++) {
+                        intervals.push(tapTimes[i] - tapTimes[i - 1]);
+                    }
+                    
+                    const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
+                    tapIntervalValue = Math.round(avgInterval);
+                    tapInterval.textContent = tapIntervalValue;
+                }
+                
+                // Update elapsed time
+                const elapsedTime = now - tapStartTime;
+                tapTime.textContent = formatTime(elapsedTime);
+            }
+        }
+
+        // Add tap to history
+        function addTapToHistory() {
+            if (tapTimes.length > 1) {
+                const tapItem = document.createElement('div');
+                tapItem.className = 'tap-item';
+                
+                const tapNumber = document.createElement('div');
+                tapNumber.textContent = `Tap ${tapCountValue}`;
+                
+                const tapTimeEl = document.createElement('div');
+                tapTimeEl.className = 'tap-time';
+                tapTimeEl.textContent = formatTime(tapTimes[tapTimes.length - 1] - tapStartTime);
+                
+                const tapIntervalEl = document.createElement('div');
+                tapIntervalEl.className = 'tap-interval';
+                
+                if (tapTimes.length > 1) {
+                    const interval = tapTimes[tapTimes.length - 1] - tapTimes[tapTimes.length - 2];
+                    tapIntervalEl.textContent = `+${interval}ms`;
+                }
+                
+                tapItem.appendChild(tapNumber);
+                tapItem.appendChild(tapTimeEl);
+                tapItem.appendChild(tapIntervalEl);
+                
+                tapHistory.insertBefore(tapItem, tapHistory.firstChild);
+                
+                // Limit history to 20 items
+                if (tapHistory.children.length > 20) {
+                    tapHistory.removeChild(tapHistory.lastChild);
+                }
+            }
+        }
+
+        // Reset tap counter
+        function resetTapCounter() {
+            clearInterval(tapIntervalId);
+            tapRunning = false;
+            tapCountValue = 0;
+            tapTimes = [];
+            tapRateValue = 0;
+            tapIntervalValue = 0;
+            
+            // Update display
+            tapCount.textContent = '0';
+            tapRate.textContent = '0';
+            tapInterval.textContent = '0';
+            tapTotal.textContent = '0';
+            tapTime.textContent = '00:00:00';
+            
+            // Clear history
+            tapHistory.innerHTML = '';
+        }
+
+        // Format number with leading zero
+        function formatNumber(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        // Format time (ms to HH:MM:SS)
+        function formatTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(secs)}`;
+        }
+
+        // Format stopwatch time (ms to HH:MM:SS.CC)
+        function formatStopwatchTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            const centiseconds = Math.floor((ms % 1000) / 10);
+            
+            return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(secs)}.${formatNumber(centiseconds)}`;
+        }
+
+        // Initialize the app
+        initApp();
+    </script>
+</body>
+</html> 

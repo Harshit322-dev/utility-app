@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do List - Daily Utility App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: #3498db;
+        }
+
+        .main-content {
+            padding: 2rem;
+            background-color: #f5f6fa;
+            min-height: calc(100vh - 70px);
+        }
+
+        .todo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .category {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .task-count {
+            background: #3498db;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .task-list {
+            min-height: 100px;
+        }
+
+        .task {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .task.dragging {
+            opacity: 0.5;
+            background: #e9ecef;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .task-content {
+            flex-grow: 1;
+        }
+
+        .task-title {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 0.2rem;
+        }
+
+        .task-description {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 0.3rem;
+        }
+
+        .task-datetime {
+            font-size: 0.8rem;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .task-alert {
+            font-size: 0.8rem;
+            color: #e67e22;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.2rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-btn {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem;
+            transition: color 0.2s;
+        }
+
+        .task-btn:hover {
+            color: #3498db;
+        }
+
+        .add-task-form {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .task-input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .date-time-inputs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .date-input, .time-input {
+            padding: 0.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .alert-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .alert-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .alert-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .alert-time {
+            padding: 0.3rem;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            width: 80px;
+        }
+
+        .add-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #2980b9;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+
+        .overdue {
+            border-left: 3px solid #e74c3c;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            color: #f1c40f;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .categories {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .task {
+                padding: 0.8rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .date-time-inputs {
+                flex-direction: column;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+
+            .notification {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        <a href="#" class="navbar-brand">
+            <i class="fas fa-tasks"></i>
+            To-do List
+        </a>
+        <div style="width: 40px;"></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="todo-container">
+            <div class="categories">
+                <div class="category" id="todo">
+                    <div class="category-header">
+                        <h2 class="category-title">To Do</h2>
+                        <span class="task-count">0</span>
+                    </div>
+                    <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Tasks will be added here -->
+                    </div>
+                    <form class="add-task-form" onsubmit="addTask(event, 'todo')">
+                        <div class="form-row">
+                            <input type="text" class="task-input" placeholder="Add a new task..." required>
+                        </div>
+                        <div class="date-time-inputs">
+                            <input type="date" class="date-input" id="task-date">
+                            <input type="time" class="time-input" id="task-time">
+                        </div>
+                        <div class="alert-options">
+                            <input type="checkbox" id="task-alert" class="alert-checkbox">
+                            <label for="task-alert" class="alert-label">Set reminder</label>
+                            <select id="alert-time" class="alert-time">
+                                <option value="5">5 minutes before</option>
+                                <option value="15">15 minutes before</option>
+                                <option value="30">30 minutes before</option>
+                                <option value="60">1 hour before</option>
+                                <option value="1440">1 day before</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="add-btn">Add Task</button>
+                    </form>
+                </div>
+
+                <div class="category" id="in-progress">
+                    <div class="category-header">
+                        <h2 class="category-title">In Progress</h2>
+                        <span class="task-count">0</span>
+                    </div>
+                    <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Tasks will be added here -->
+                    </div>
+                </div>
+
+                <div class="category" id="completed">
+                    <div class="category-header">
+                        <h2 class="category-title">Completed</h2>
+                        <span class="task-count">0</span>
+                    </div>
+                    <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Tasks will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="notification-container"></div>
+
+    <script>
+        let taskId = 0;
+        let alertTimeouts = {};
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.target.classList.add('dragging');
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(data);
+            const taskList = ev.target.closest('.task-list');
+            
+            if (taskList) {
+                taskList.appendChild(draggedElement);
+                draggedElement.classList.remove('dragging');
+                updateTaskCounts();
+            }
+        }
+
+        function addTask(event, categoryId) {
+            event.preventDefault();
+            const input = event.target.querySelector('.task-input');
+            const dateInput = document.getElementById('task-date');
+            const timeInput = document.getElementById('task-time');
+            const alertCheckbox = document.getElementById('task-alert');
+            const alertTimeSelect = document.getElementById('alert-time');
+            
+            const taskText = input.value.trim();
+            const taskDate = dateInput.value;
+            const taskTime = timeInput.value;
+            const hasAlert = alertCheckbox.checked;
+            const alertTime = alertTimeSelect.value;
+            
+            if (taskText) {
+                const taskList = document.querySelector(`#${categoryId} .task-list`);
+                const task = createTaskElement(taskText, taskDate, taskTime, hasAlert, alertTime);
+                taskList.appendChild(task);
+                input.value = '';
+                dateInput.value = '';
+                timeInput.value = '';
+                alertCheckbox.checked = false;
+                updateTaskCounts();
+                checkOverdueTasks();
+            }
+        }
+
+        function createTaskElement(text, date, time, hasAlert, alertTime) {
+            taskId++;
+            const task = document.createElement('div');
+            task.className = 'task';
+            task.id = `task-${taskId}`;
+            task.draggable = true;
+            task.ondragstart = drag;
+            
+            // Store date, time, and alert info as data attributes
+            task.dataset.date = date;
+            task.dataset.time = time;
+            task.dataset.hasAlert = hasAlert;
+            task.dataset.alertTime = alertTime;
+            
+            // Check if task is overdue
+            if (date && time) {
+                const taskDateTime = new Date(`${date}T${time}`);
+                if (taskDateTime < new Date()) {
+                    task.classList.add('overdue');
+                }
+            }
+
+            let datetimeDisplay = '';
+            if (date && time) {
+                const formattedDate = new Date(`${date}T${time}`).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                datetimeDisplay = `<div class="task-datetime">
+                    <i class="fas fa-calendar-alt"></i> ${formattedDate}
+                </div>`;
+            }
+
+            let alertDisplay = '';
+            if (hasAlert && date && time) {
+                let alertText = '';
+                switch(alertTime) {
+                    case '5': alertText = '5 minutes before'; break;
+                    case '15': alertText = '15 minutes before'; break;
+                    case '30': alertText = '30 minutes before'; break;
+                    case '60': alertText = '1 hour before'; break;
+                    case '1440': alertText = '1 day before'; break;
+                }
+                alertDisplay = `<div class="task-alert">
+                    <i class="fas fa-bell"></i> Reminder: ${alertText}
+                </div>`;
+            }
+
+            task.innerHTML = `
+                <input type="checkbox" class="task-checkbox" onchange="toggleTask(this)">
+                <div class="task-content">
+                    <div class="task-title">${text}</div>
+                    <div class="task-description">Click to edit description</div>
+                    ${datetimeDisplay}
+                    ${alertDisplay}
+                </div>
+                <div class="task-actions">
+                    <button class="task-btn" onclick="editTask(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="task-btn" onclick="deleteTask(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+
+            // Set up alert if needed
+            if (hasAlert && date && time) {
+                setupAlert(task, date, time, alertTime);
+            }
+
+            return task;
+        }
+
+        function setupAlert(task, date, time, alertTime) {
+            const taskDateTime = new Date(`${date}T${time}`);
+            const alertDateTime = new Date(taskDateTime.getTime() - (parseInt(alertTime) * 60000));
+            const now = new Date();
+            
+            // Only set up alert if it's in the future
+            if (alertDateTime > now) {
+                const timeoutId = setTimeout(() => {
+                    showNotification(task);
+                }, alertDateTime.getTime() - now.getTime());
+                
+                // Store the timeout ID so we can clear it if needed
+                alertTimeouts[task.id] = timeoutId;
+            }
+        }
+
+        function showNotification(task) {
+            const title = task.querySelector('.task-title').textContent;
+            const date = task.dataset.date;
+            const time = task.dataset.time;
+            
+            let formattedDate = '';
+            if (date && time) {
+                formattedDate = new Date(`${date}T${time}`).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Task Reminder</div>
+                    <div class="notification-message">${title} is due ${formattedDate}</div>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.getElementById('notification-container').appendChild(notification);
+            
+            // Auto-remove notification after 10 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 10000);
+            
+            // Play notification sound if supported
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Task Reminder', {
+                    body: `${title} is due ${formattedDate}`,
+                    icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/bell.svg'
+                });
+            }
+        }
+
+        function toggleTask(checkbox) {
+            const task = checkbox.closest('.task');
+            const title = task.querySelector('.task-title');
+            title.classList.toggle('completed', checkbox.checked);
+            updateTaskCounts();
+        }
+
+        function editTask(button) {
+            const task = button.closest('.task');
+            const title = task.querySelector('.task-title');
+            const currentText = title.textContent;
+            const currentDate = task.dataset.date || '';
+            const currentTime = task.dataset.time || '';
+            const currentHasAlert = task.dataset.hasAlert === 'true';
+            const currentAlertTime = task.dataset.alertTime || '15';
+            
+            // Create a simple form for editing
+            const form = document.createElement('form');
+            form.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <input type="text" value="${currentText}" style="padding: 0.5rem; border: 1px solid #e9ecef; border-radius: 5px;">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="date" value="${currentDate}" style="padding: 0.5rem; border: 1px solid #e9ecef; border-radius: 5px;">
+                        <input type="time" value="${currentTime}" style="padding: 0.5rem; border: 1px solid #e9ecef; border-radius: 5px;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="checkbox" id="edit-alert" ${currentHasAlert ? 'checked' : ''} style="width: 16px; height: 16px;">
+                        <label for="edit-alert" style="font-size: 0.9rem; color: #7f8c8d;">Set reminder</label>
+                        <select id="edit-alert-time" style="padding: 0.3rem; border: 1px solid #e9ecef; border-radius: 5px; font-size: 0.9rem; width: 80px;">
+                            <option value="5" ${currentAlertTime === '5' ? 'selected' : ''}>5 minutes before</option>
+                            <option value="15" ${currentAlertTime === '15' ? 'selected' : ''}>15 minutes before</option>
+                            <option value="30" ${currentAlertTime === '30' ? 'selected' : ''}>30 minutes before</option>
+                            <option value="60" ${currentAlertTime === '60' ? 'selected' : ''}>1 hour before</option>
+                            <option value="1440" ${currentAlertTime === '1440' ? 'selected' : ''}>1 day before</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <button type="submit" style="background: #3498db; color: white; border: none; padding: 0.5rem; border-radius: 5px; cursor: pointer;">Save</button>
+                        <button type="button" onclick="this.closest('form').remove()" style="background: #e74c3c; color: white; border: none; padding: 0.5rem; border-radius: 5px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            // Replace the task content with the form
+            const taskContent = task.querySelector('.task-content');
+            const originalContent = taskContent.innerHTML;
+            taskContent.innerHTML = '';
+            taskContent.appendChild(form);
+            
+            // Handle form submission
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                const newText = form.querySelector('input[type="text"]').value.trim();
+                const newDate = form.querySelector('input[type="date"]').value;
+                const newTime = form.querySelector('input[type="time"]').value;
+                const newHasAlert = form.querySelector('#edit-alert').checked;
+                const newAlertTime = form.querySelector('#edit-alert-time').value;
+                
+                if (newText) {
+                    // Clear existing alert timeout if any
+                    if (alertTimeouts[task.id]) {
+                        clearTimeout(alertTimeouts[task.id]);
+                        delete alertTimeouts[task.id];
+                    }
+                    
+                    // Update the task with new values
+                    task.dataset.date = newDate;
+                    task.dataset.time = newTime;
+                    task.dataset.hasAlert = newHasAlert;
+                    task.dataset.alertTime = newAlertTime;
+                    
+                    // Recreate the task content
+                    let datetimeDisplay = '';
+                    if (newDate && newTime) {
+                        const formattedDate = new Date(`${newDate}T${newTime}`).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        datetimeDisplay = `<div class="task-datetime">
+                            <i class="fas fa-calendar-alt"></i> ${formattedDate}
+                        </div>`;
+                    }
+                    
+                    let alertDisplay = '';
+                    if (newHasAlert && newDate && newTime) {
+                        let alertText = '';
+                        switch(newAlertTime) {
+                            case '5': alertText = '5 minutes before'; break;
+                            case '15': alertText = '15 minutes before'; break;
+                            case '30': alertText = '30 minutes before'; break;
+                            case '60': alertText = '1 hour before'; break;
+                            case '1440': alertText = '1 day before'; break;
+                        }
+                        alertDisplay = `<div class="task-alert">
+                            <i class="fas fa-bell"></i> Reminder: ${alertText}
+                        </div>`;
+                    }
+                    
+                    taskContent.innerHTML = `
+                        <div class="task-title">${newText}</div>
+                        <div class="task-description">Click to edit description</div>
+                        ${datetimeDisplay}
+                        ${alertDisplay}
+                    `;
+                    
+                    // Check if task is overdue
+                    task.classList.remove('overdue');
+                    if (newDate && newTime) {
+                        const taskDateTime = new Date(`${newDate}T${newTime}`);
+                        if (taskDateTime < new Date()) {
+                            task.classList.add('overdue');
+                        }
+                    }
+                    
+                    // Set up new alert if needed
+                    if (newHasAlert && newDate && newTime) {
+                        setupAlert(task, newDate, newTime, newAlertTime);
+                    }
+                }
+            };
+        }
+
+        function deleteTask(button) {
+            const task = button.closest('.task');
+            if (confirm('Are you sure you want to delete this task?')) {
+                // Clear alert timeout if any
+                if (alertTimeouts[task.id]) {
+                    clearTimeout(alertTimeouts[task.id]);
+                    delete alertTimeouts[task.id];
+                }
+                task.remove();
+                updateTaskCounts();
+            }
+        }
+
+        function updateTaskCounts() {
+            document.querySelectorAll('.category').forEach(category => {
+                const count = category.querySelector('.task-list').children.length;
+                category.querySelector('.task-count').textContent = count;
+            });
+        }
+
+        function checkOverdueTasks() {
+            const now = new Date();
+            document.querySelectorAll('.task').forEach(task => {
+                const date = task.dataset.date;
+                const time = task.dataset.time;
+                
+                if (date && time) {
+                    const taskDateTime = new Date(`${date}T${time}`);
+                    if (taskDateTime < now) {
+                        task.classList.add('overdue');
+                    } else {
+                        task.classList.remove('overdue');
+                    }
+                }
+            });
+        }
+
+        // Request notification permission
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
+
+        // Initialize task counts
+        updateTaskCounts();
+        
+        // Check for overdue tasks every minute
+        setInterval(checkOverdueTasks, 60000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize todos from localStorage or with mock data if empty
+            let todos = JSON.parse(localStorage.getItem('todos')) || [];
+            
+            // Add mock data if no todos exist
+            if (todos.length === 0) {
+                todos = [
+                    {
+                        id: 1,
+                        text: 'Complete project proposal',
+                        completed: false,
+                        priority: 'high',
+                        dueDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0],
+                        category: 'Work'
+                    },
+                    {
+                        id: 2,
+                        text: 'Buy groceries',
+                        completed: false,
+                        priority: 'medium',
+                        dueDate: new Date().toISOString().split('T')[0],
+                        category: 'Personal'
+                    },
+                    {
+                        id: 3,
+                        text: 'Schedule dentist appointment',
+                        completed: true,
+                        priority: 'low',
+                        dueDate: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0],
+                        category: 'Health'
+                    },
+                    {
+                        id: 4,
+                        text: 'Read chapter 5 of JavaScript book',
+                        completed: false,
+                        priority: 'medium',
+                        dueDate: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0],
+                        category: 'Learning'
+                    },
+                    {
+                        id: 5,
+                        text: 'Call mom',
+                        completed: false,
+                        priority: 'high',
+                        dueDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString().split('T')[0],
+                        category: 'Personal'
+                    }
+                ];
+                
+                // Save mock data to localStorage
+                localStorage.setItem('todos', JSON.stringify(todos));
+            }
+            
+            // Set the todoId to the next available ID
+            taskId = todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1;
+            
+            // Render the todos
+            renderTodos();
+        });
+    </script>
+</body>
+</html> 

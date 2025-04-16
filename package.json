@@ -1,0 +1,24 @@
+{
+  "name": "daily-utility-app",
+  "version": "1.0.0",
+  "description": "A comprehensive web application that provides various utility tools for daily use",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve",
+    "deploy": "vercel"
+  },
+  "keywords": [
+    "utility",
+    "calculator",
+    "habits",
+    "notes",
+    "todo",
+    "timer",
+    "profile"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+} 
